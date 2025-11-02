@@ -79,6 +79,9 @@ Our vision is to transform the global carbon offset ecosystem by creating a tran
 This project is licensed under the MIT License - see the LICENSE file for details.
 
 ---
+### CONTRACT DETAILS
+Contract ID -CBF27HVYQFOUSNBCA5I4ZZHKJ536WGMD7OYYTFU7FVIFJ3FC6TKEERRQ
+
 
 ## 🤝 Contributing
 
