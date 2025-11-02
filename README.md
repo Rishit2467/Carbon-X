@@ -81,6 +81,8 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ---
 ### CONTRACT DETAILS
 Contract ID -CBF27HVYQFOUSNBCA5I4ZZHKJ536WGMD7OYYTFU7FVIFJ3FC6TKEERRQ
+<img width="1773" height="888" alt="Screenshot 2025-11-02 154757" src="https://github.com/user-attachments/assets/0c564177-84ca-4685-a489-2bca9d368bd0" />
+
 
 
 ## 🤝 Contributing
