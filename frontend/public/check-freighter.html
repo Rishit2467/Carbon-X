@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Freighter Detection Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #16a34a;
+            margin-bottom: 20px;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            font-weight: 500;
+        }
+        .success {
+            background: #d1fae5;
+            color: #065f46;
+            border-left: 4px solid #10b981;
+        }
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            border-left: 4px solid #ef4444;
+        }
+        .info {
+            background: #dbeafe;
+            color: #1e40af;
+            border-left: 4px solid #3b82f6;
+        }
+        button {
+            background: #16a34a;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 10px 10px 0;
+        }
+        button:hover {
+            background: #15803d;
+        }
+        button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+        pre {
+            background: #1f2937;
+            color: #10b981;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #16a34a;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            vertical-align: middle;
+            margin-left: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🔍 Freighter Wallet Detection Test</h1>
+        
+        <div id="detection-status"></div>
+        
+        <button onclick="detectFreighter()" id="detectBtn">Check Freighter</button>
+        <button onclick="connectWallet()" id="connectBtn" disabled>Connect Wallet</button>
+        <button onclick="getAddress()" id="addressBtn" disabled>Get Address</button>
+        
+        <div id="result"></div>
+        
+        <div style="margin-top: 30px;">
+            <h3>Installation Instructions (All Browsers):</h3>
+            <div class="info">
+                <strong>📥 Installation Steps:</strong>
+                <ol>
+                    <li>Visit <a href="https://www.freighter.app/" target="_blank">freighter.app</a></li>
+                    <li>Click your browser:
+                        <ul>
+                            <li>✅ <strong>Chrome</strong> - Chrome Web Store</li>
+                            <li>✅ <strong>Brave</strong> - Chrome Web Store (uses Chrome extensions)</li>
+                            <li>✅ <strong>Edge</strong> - Edge Add-ons</li>
+                            <li>✅ <strong>Firefox</strong> - Firefox Add-ons</li>
+                            <li>✅ <strong>Opera</strong> - Chrome Web Store</li>
+                        </ul>
+                    </li>
+                    <li>Click "Add to [Browser]" button</li>
+                    <li>Create or import your wallet</li>
+                    <li>Unlock your wallet</li>
+                    <li><strong>Refresh this page</strong></li>
+                </ol>
+                
+                <strong>🦁 Brave Users - Important!</strong>
+                <br>If Freighter doesn't work in Brave:
+                <ol>
+                    <li>Go to <code>brave://settings/shields</code></li>
+                    <li>Under "Advanced View", disable shields for this site</li>
+                    <li>OR: Click the Brave shield icon → Advanced controls → Allow all scripts</li>
+                    <li>Refresh the page</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function getFreighterApi() {
+            // Check all possible Freighter injection points
+            return window.freighterApi || window.freighter || null;
+        }
+        
+        async function detectFreighter() {
+            const statusDiv = document.getElementById('detection-status');
+            const connectBtn = document.getElementById('connectBtn');
+            const addressBtn = document.getElementById('addressBtn');
+            
+            statusDiv.innerHTML = '<div class="info">Checking for Freighter... <span class="loading"></span></div>';
+            
+            // Log all window properties that might be Freighter
+            console.log('=== Freighter Detection Debug ===');
+            console.log('window.freighterApi:', window.freighterApi);
+            console.log('window.freighter:', window.freighter);
+            
+            const freighterKeys = Object.keys(window).filter(k => 
+                k.toLowerCase().includes('freight') || 
+                k.toLowerCase().includes('stellar')
+            );
+            console.log('Potential Freighter keys:', freighterKeys);
+            
+            // Wait for Freighter to inject (up to 3 seconds)
+            let freighterApi = getFreighterApi();
+            let attempts = 0;
+            
+            while (!freighterApi && attempts < 30) {
+                await new Promise(resolve => setTimeout(resolve, 100));
+                freighterApi = getFreighterApi();
+                attempts++;
+            }
+            
+            if (freighterApi) {
+                statusDiv.innerHTML = '<div class="success">✅ Freighter wallet detected!</div>';
+                connectBtn.disabled = false;
+                
+                // Log available methods
+                console.log('Freighter API object:', freighterApi);
+                console.log('Freighter API methods:', Object.keys(freighterApi));
+                
+            } else {
+                statusDiv.innerHTML = `
+                    <div class="error">
+                        ❌ Freighter wallet NOT detected
+                        <br><br>
+                        <strong>Debug Info:</strong>
+                        <pre>window.freighterApi: ${window.freighterApi}
+window.freighter: ${window.freighter}
+Checked for ${attempts} attempts (3 seconds)</pre>
+                        <br>
+                        <strong>Troubleshooting by Browser:</strong>
+                        <ul>
+                            <li><strong>Chrome:</strong> <code>chrome://extensions/</code></li>
+                            <li><strong>Brave:</strong> <code>brave://extensions/</code></li>
+                            <li><strong>Edge:</strong> <code>edge://extensions/</code></li>
+                            <li><strong>Firefox:</strong> <code>about:addons</code></li>
+                            <li><strong>Opera:</strong> <code>opera://extensions/</code></li>
+                        </ul>
+                        <strong>Next Steps:</strong>
+                        <ul>
+                            <li>Verify "Freighter" is installed and enabled</li>
+                            <li>Press F12, check Console for errors</li>
+                            <li>Try disabling/re-enabling the extension</li>
+                            <li>Hard refresh: Ctrl+Shift+R</li>
+                            <li>Restart your browser</li>
+                        </ul>
+                    </div>
+                `;
+                connectBtn.disabled = true;
+                addressBtn.disabled = true;
+            }
+        }
+        
+        async function connectWallet() {
+            const resultDiv = document.getElementById('result');
+            const addressBtn = document.getElementById('addressBtn');
+            const freighterApi = getFreighterApi();
+            
+            try {
+                resultDiv.innerHTML = '<div class="info">Requesting connection... <span class="loading"></span></div>';
+                
+                const isConnected = await freighterApi.isConnected();
+                
+                if (isConnected) {
+                    resultDiv.innerHTML = '<div class="success">✅ Freighter is connected and unlocked!</div>';
+                    addressBtn.disabled = false;
+                } else {
+                    resultDiv.innerHTML = '<div class="error">❌ Freighter is locked. Please unlock your wallet.</div>';
+                }
+                
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+                console.error('Connection error:', error);
+            }
+        }
+        
+        async function getAddress() {
+            const resultDiv = document.getElementById('result');
+            const freighterApi = getFreighterApi();
+            
+            try {
+                resultDiv.innerHTML = '<div class="info">Getting address... <span class="loading"></span></div>';
+                
+                const result = await freighterApi.getAddress();
+                const publicKey = await freighterApi.getPublicKey();
+                
+                console.log('Address result:', result);
+                console.log('Public key:', publicKey);
+                
+                resultDiv.innerHTML = `
+                    <div class="success">
+                        ✅ Successfully retrieved wallet info!
+                        <pre>Address: ${result.address}
+Public Key: ${publicKey}</pre>
+                    </div>
+                `;
+                
+            } catch (error) {
+                if (error.message.includes('User declined')) {
+                    resultDiv.innerHTML = '<div class="error">❌ Connection request was declined in Freighter popup.</div>';
+                } else {
+                    resultDiv.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+                }
+                console.error('Get address error:', error);
+            }
+        }
+        
+        // Auto-detect on page load
+        window.addEventListener('load', () => {
+            setTimeout(detectFreighter, 500);
+        });
+    </script>
+</body>
+</html>
