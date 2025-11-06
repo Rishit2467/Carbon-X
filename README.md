@@ -5,7 +5,7 @@ A comprehensive Soroban smart contract for tokenizing, verifying, trading, and r
 ![Stellar](https://img.shields.io/badge/Stellar-Soroban-blue)
 ![Rust](https://img.shields.io/badge/Rust-1.75+-orange)
 ![License](https://img.shields.io/badge/license-MIT-green)
-
+PROJECT LINK (https://frontend-nb5yfyyxl-cubetricks24-4687s-projects.vercel.app/)
 ## � Project Description
 
 Carbon-X is a decentralized smart contract platform built on the Stellar blockchain using the Soroban SDK. It enables the tokenization, verification, and exchange of carbon credits representing measurable CO₂ offsets from certified environmental projects worldwide.
